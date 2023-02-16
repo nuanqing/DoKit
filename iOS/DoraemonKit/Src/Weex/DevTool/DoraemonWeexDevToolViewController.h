@@ -1,6 +1,6 @@
 //
 //  DoraemonWeexDevToolViewController.h
-//  DoraemonKit
+//  WeexDemo
 //
 //  Created by yixiang on 2019/6/6.
 //  Copyright © 2019年 taobao. All rights reserved.

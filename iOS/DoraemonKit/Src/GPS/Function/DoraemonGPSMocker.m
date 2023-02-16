@@ -1,6 +1,6 @@
 //
 //  DoraemonGPSMocker.m
-//  DoraemonKit
+//  DoraemonKit-DoraemonKit
 //
 //  Created by yixiang on 2018/7/4.
 //
@@ -228,14 +228,6 @@ monitoringDidFailForRegion:(nullable CLRegion *)region
     [self enumDelegate:manager block:^(id<CLLocationManagerDelegate> delegate) {
         if ([delegate respondsToSelector:@selector(locationManager:didChangeAuthorizationStatus:)]) {
             [delegate locationManager:manager didChangeAuthorizationStatus:status];
-        }
-    }];
-}
-
--(void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
-    [self enumDelegate:manager block:^(id<CLLocationManagerDelegate> delegate) {
-        if ([delegate respondsToSelector:@selector(locationManagerDidChangeAuthorization:)]) {
-            [delegate performSelector:@selector(locationManagerDidChangeAuthorization:) withObject:manager];
         }
     }];
 }

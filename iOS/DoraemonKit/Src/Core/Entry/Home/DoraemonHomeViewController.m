@@ -156,7 +156,6 @@ static NSString *DoraemonHomeCloseCellID = @"DoraemonHomeCloseCellID";
         NSArray *pluginArray = dict[@"pluginArray"];
         NSDictionary *item = pluginArray[row];
         [cell update:item[@"icon"] name:item[@"name"]];
-        [cell updateImage:item[@"image"]];
         return cell;
     } else {
         DoraemonHomeCloseCell *closeCell = [collectionView dequeueReusableCellWithReuseIdentifier:DoraemonHomeCloseCellID forIndexPath: indexPath];

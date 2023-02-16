@@ -19,7 +19,6 @@
 #import "UIView+Doraemon.h"
 #import "UIViewController+Doraemon.h"
 #import "DoraemonDemoMemoryLeakViewController.h"
-#import "DoraemonDemoMultiControlViewController.h"
 
 @interface DoraemonDemoHomeViewController ()<UITableViewDelegate,UITableViewDataSource>
 
@@ -106,8 +105,6 @@
         vc = [[DoraemonDemoCommonViewController alloc] init];
     }else if(row == 8){
         vc = [[DoraemonDemoMemoryLeakViewController alloc] init];
-    }else if(row == 9){
-        vc = [[DoraemonDemoMultiControlViewController alloc] init];
     }
     if (vc) {
         [self.navigationController pushViewController:vc animated:YES];

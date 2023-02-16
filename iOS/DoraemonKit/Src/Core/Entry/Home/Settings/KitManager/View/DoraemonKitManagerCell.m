@@ -1,6 +1,6 @@
 //
 //  DoraemonKitManagerCell.m
-//  DoraemonKit
+//  AFNetworking
 //
 //  Created by didi on 2020/4/28.
 //
@@ -114,12 +114,6 @@
     }else{
         self.select.hidden = YES;
         self.maskView.hidden = YES;
-    }
-}
-
-- (void)updateImage:(UIImage *)image {
-    if (image) {        
-        self.icon.image = image;
     }
 }
 

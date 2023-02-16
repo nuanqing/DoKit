@@ -21,7 +21,6 @@
 #import <DoraemonKit/DKDataRequestDTOModel.h>
 #import <DoraemonKit/DKDataResponseDTOModel.h>
 #import <DoraemonKit/DKMultiControlProtocol.h>
-#import <DoraemonKit/DoraemonMCCommandExcutor.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -96,9 +95,6 @@ NSString *generateId(void) {
                 if (jsonDictionary) {
                     DKActionDTOModel *actionDTOModel = [MTLJSONAdapter modelOfClass:DKActionDTOModel.class fromJSONDictionary:jsonDictionary error:&error];
                     self.behaviorId = actionDTOModel.behaviorId;
-                    if (actionDTOModel.payload) {
-                        [DoraemonMCCommandExcutor excuteMessageStrFromNet:actionDTOModel.payload];
-                    }
                 }
             }
         } else if ([commonDTOModel.dataType isEqualToString:DK_TCP]) {

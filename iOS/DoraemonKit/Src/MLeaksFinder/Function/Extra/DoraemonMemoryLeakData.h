@@ -1,6 +1,6 @@
 //
 //  DoraemonMemoryLeakData.h
-//  DoraemonKit
+//  DoraemonKit-DoraemonKit
 //
 //  Created by didi on 2019/10/7.
 //
@@ -9,13 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^DoraemonLeakManagerBlock)(NSDictionary *leakInfo);
-
 @interface DoraemonMemoryLeakData : NSObject
 
 + (DoraemonMemoryLeakData *)shareInstance;
-
-- (void)addLeakBlock:(DoraemonLeakManagerBlock)block;
 
 - (void)addObject:(id)object;
 

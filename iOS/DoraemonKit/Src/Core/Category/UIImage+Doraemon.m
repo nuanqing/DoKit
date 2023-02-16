@@ -1,6 +1,6 @@
 //
-//  UIImage+Doraemon.m
-//  DoraemonKit
+//  UIImage+DoraemonKit.m
+//  DoraemonKit-DoraemonKit
 //
 //  Created by yixiang on 2017/12/11.
 //
@@ -20,10 +20,12 @@
         
         NSString *imageName = nil;
         CGFloat scale = [UIScreen mainScreen].scale;
-        if (ABS(scale-3) <= 0.001) {
+        if (ABS(scale-3) <= 0.001){
             imageName = [NSString stringWithFormat:@"%@@3x",name];
-        } else {
+        }else if(ABS(scale-2) <= 0.001){
             imageName = [NSString stringWithFormat:@"%@@2x",name];
+        }else{
+            imageName = name;
         }
         UIImage *image = [UIImage imageWithContentsOfFile:[imageBundle pathForResource:imageName ofType:@"png"]];
         if (!image) {

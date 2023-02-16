@@ -1,6 +1,6 @@
 //
 //  DoraemonKitManagerViewController.m
-//  DoraemonKit
+//  AFNetworking
 //
 //  Created by didi on 2020/4/24.
 //
@@ -228,7 +228,6 @@ static NSString *DoraemonKitManagerHeadCellID = @"DoraemonKitManagerHeadCellID";
     NSArray *pluginArray = dict[@"pluginArray"];
     NSDictionary *item = pluginArray[row];
     [cell update:item[@"icon"] name:item[@"name"] select:[item[@"show"] boolValue] editStatus:_editStatus];
-    [cell updateImage:item[@"image"]];
     return cell;
 }
 

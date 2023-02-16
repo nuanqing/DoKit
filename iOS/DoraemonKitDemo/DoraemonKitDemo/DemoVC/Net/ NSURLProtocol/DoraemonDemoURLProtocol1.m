@@ -49,11 +49,7 @@ static NSString * const kDoraemonDemoUrlProtocolKey = @"doraemon_demo_url_protoc
 
 - (void)stopLoading{
     NSLog(@"11111 == stopLoading");
-    [[DoraemonNetFlowManager shareInstance] httpBodyFromRequest:self.request bodyCallBack:^(NSData *httpBody) {
-        NSString* requestBody = [DoraemonUrlUtil convertJsonFromData:httpBody];
-        NSLog(@"11111 == requestBody = %@",requestBody);
-        [self.connection cancel];
-    }];
+   
 }
 
 

@@ -1,6 +1,6 @@
 //
 //  DoraemonMemoryLeakData.m
-//  DoraemonKit
+//  DoraemonKit-DoraemonKit
 //
 //  Created by didi on 2019/10/7.
 //
@@ -16,7 +16,6 @@
 @interface DoraemonMemoryLeakData()
 
 @property (nonatomic, strong) NSMutableArray *dataArray;
-@property (nonatomic, copy) DoraemonLeakManagerBlock block;
 
 @end
 
@@ -39,10 +38,6 @@
     return self;
 }
 
-- (void)addLeakBlock:(DoraemonLeakManagerBlock)block{
-    self.block = block;
-}
-
 - (void)addObject:(id)object{
     NSString *className = NSStringFromClass([object class]);
     NSNumber *classPtr = @((uintptr_t)object);
@@ -57,10 +52,6 @@
     };
     [_dataArray addObject:info];
     [[DoraemonHealthManager sharedInstance] addLeak:info];
-    
-    if (self.block) {
-        self.block(info);
-    }
 }
 
 - (void)removeObjectPtr:(NSNumber *)objectPtr{

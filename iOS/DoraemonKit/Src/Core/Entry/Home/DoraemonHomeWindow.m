@@ -10,8 +10,6 @@
 #import "UIColor+Doraemon.h"
 #import "DoraemonHomeViewController.h"
 #import "DoraemonNavigationController.h"
-#import "DoraemonHierarchyHelper.h"
-#import "DoraemonHierarchyWindow.h"
 
 @interface DoraemonHomeWindow()
 
@@ -56,10 +54,6 @@
 }
 
 - (void)show{
-    if ([DoraemonHierarchyHelper shared].window.hidden && [[DoraemonHierarchyHelper shared].window isKindOfClass:[DoraemonHierarchyWindow class]]) {
-        [[DoraemonHierarchyHelper shared].window show];
-        return;
-    }
     DoraemonHomeViewController *vc = [[DoraemonHomeViewController alloc] init];
     [self setRootVc:vc];
     

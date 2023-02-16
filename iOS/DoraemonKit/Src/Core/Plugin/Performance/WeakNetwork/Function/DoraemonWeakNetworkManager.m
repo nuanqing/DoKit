@@ -1,6 +1,6 @@
 //
 //  DoraemonWeakNetworkManager.m
-//  DoraemonKit
+//  AFNetworking
 //
 //  Created by didi on 2019/11/21.
 //
@@ -115,9 +115,7 @@
 
 #pragma mark -- DoraemonNetworkInterceptorDelegate
 - (void)doraemonNetworkInterceptorDidReceiveData:(NSData *)data response:(NSURLResponse *)response request:(NSURLRequest *)request error:(NSError *)error startTime:(NSTimeInterval)startTime {
-    [DoraemonUrlUtil requestLength:request callBack:^(NSUInteger length) {
-        [[DoraemonWeakNetworkWindow shareInstance] updateFlowValue:[NSString stringWithFormat:@"%zi",length] downFlow:[NSString stringWithFormat:@"%lli",[DoraemonUrlUtil getResponseLength:(NSHTTPURLResponse *)response data:data]] fromWeak:NO];
-    }];
+    [[DoraemonWeakNetworkWindow shareInstance] updateFlowValue:[NSString stringWithFormat:@"%zi",[DoraemonUrlUtil getRequestLength:request]] downFlow:[NSString stringWithFormat:@"%lli",[DoraemonUrlUtil getResponseLength:(NSHTTPURLResponse *)response data:data]] fromWeak:NO];
 }
 
 - (BOOL)shouldIntercept {

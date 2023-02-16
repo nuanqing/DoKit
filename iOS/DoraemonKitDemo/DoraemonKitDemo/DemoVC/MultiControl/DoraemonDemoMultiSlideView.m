@@ -8,7 +8,6 @@
 
 #import "DoraemonDemoMultiSlideView.h"
 #import <Masonry/Masonry.h>
-#import "DoraemonMCCommandGenerator.h"
 typedef void(^CommonActionBlock)(id);
 @interface DoraemonDemoMultiSlideView ()<UIGestureRecognizerDelegate>
 
@@ -92,47 +91,7 @@ typedef void(^CommonActionBlock)(id);
 
 - (void)performPanGestureRecognizer:(UIPanGestureRecognizer *)panGestureRecognizer
 {
-    _fMaxSlideValue = _bgView.frame.size.width - _slideButton.frame.size.width;
-    CGPoint translation = [panGestureRecognizer translationInView:_bgView];
-    if(panGestureRecognizer.state == UIGestureRecognizerStateBegan){
-        _lbLockName.hidden = YES;
-    }else if(panGestureRecognizer.state == UIGestureRecognizerStateChanged){
-        if (translation.x == 1) {
-            [DoraemonMCCommandGenerator sendCustomMessageWithView:self eventInfo:@{@"eventInfo":@"customType1"} messageType:@"customType1"];
-        }
-        if(translation.x > 0){
-            _lbLockName.hidden = YES;
-            CGFloat offset = translation.x;
-            if(offset > _fMaxSlideValue){
-                offset = _fMaxSlideValue;
-            }
-            [_slideView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.leading.equalTo(self.bgView).offset(offset);
-                make.top.bottom.trailing.equalTo(self.bgView);
-            }];
-        }else{
-            
-        }
-    }else if(panGestureRecognizer.state == UIGestureRecognizerStateEnded || panGestureRecognizer.state == UIGestureRecognizerStateCancelled){
-        if(panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
-            [DoraemonMCCommandGenerator sendCustomMessageWithView:self eventInfo:@{@"eventInfo":@"customType2"} messageType:@"customType2"];
-        }
-        if(translation.x > _fMaxSlideValue * self.nUnlockScale/100.0){
-            [_slideView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.top.bottom.trailing.equalTo(self.bgView);
-                make.leading.equalTo(self.bgView).offset(self.fMaxSlideValue);
-            }];
-            _lbLockName.hidden = YES;
-            if(self.unLockBlock){
-                self.unLockBlock(@(YES));
-            }
-        }else{
-            [_slideView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.edges.equalTo(self.bgView);
-            }];
-            _lbLockName.hidden = NO;
-        }
-    }
+    
 }
 
 @end

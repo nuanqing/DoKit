@@ -110,11 +110,6 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
     [self install];
 }
 
-- (void)installWithMockDomain:(NSString *)mockDomain{
-    self.mockDomain = mockDomain;
-    [self install];
-}
-
 - (void)installWithStartingPosition:(CGPoint) position{
     _startingPosition = position;
     [self installWithCustomBlock:^{
@@ -242,7 +237,6 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
 #if DoraemonWithDatabase
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonDatabasePlugin];
 #endif
-    [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonJavaScriptPlugin];
     
     #pragma mark - 性能检测
     [self addPluginWithPluginType:DoraemonManagerPluginType_DoraemonFPSPlugin];
@@ -335,21 +329,6 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
     pluginDic[@"show"] = @1;
 
 }
-
-- (void)addPluginWithTitle:(NSString *)title image:(UIImage *)image desc:(NSString *)desc pluginName:(NSString *)entryName atModule:(NSString *)moduleName handle:(void (^)(NSDictionary * _Nonnull))handleBlock {
-    NSMutableDictionary *pluginDic = [self foundGroupWithModule:moduleName];
-    pluginDic[@"key"] = [NSString stringWithFormat:@"%@-%@-%@",moduleName,title,desc];
-    pluginDic[@"name"] = title;
-    pluginDic[@"image"] = image;
-    pluginDic[@"desc"] = desc;
-    pluginDic[@"pluginName"] = entryName;
-    if (handleBlock) {
-        [_keyBlockDic setValue:[handleBlock copy] forKey:pluginDic[@"key"]];
-    }
-    pluginDic[@"buriedPoint"] = @"dokit_sdk_business_ck";
-    pluginDic[@"show"] = @1;
-}
-
 - (NSMutableDictionary *)foundGroupWithModule:(NSString *)module
 {
     NSMutableDictionary *pluginDic = [NSMutableDictionary dictionary];
@@ -571,14 +550,6 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
                                    @{kAtModule:DoraemonLocalizedString(@"常用工具")},
                                    @{kBuriedPoint:@"dokit_sdk_comm_ck_userdefault"}
                            ],
-                           @(DoraemonManagerPluginType_DoraemonJavaScriptPlugin) : @[
-                                   @{kTitle:DoraemonLocalizedString(@"JS脚本")},
-                                   @{kDesc:DoraemonLocalizedString(@"JS脚本")},
-                                   @{kIcon:@"doraemon_js"},
-                                   @{kPluginName:@"DoraemonJavaScriptPlugin"},
-                                   @{kAtModule:DoraemonLocalizedString(@"常用工具")},
-                                   @{kBuriedPoint:@"dokit_sdk_comm_ck_js"}
-                           ],
                            
                            // 性能检测
                            @(DoraemonManagerPluginType_DoraemonFPSPlugin) : @[
@@ -779,10 +750,6 @@ typedef void (^DoraemonPerformanceBlock)(NSDictionary *);
 
 - (NSString *)startClass{
     return [[DoraemonCacheManager sharedInstance] startClass];
-}
-
-- (void)configEntryBtnBlingWithText:(NSString *)text backColor:(UIColor *)backColor {
-    [self.entryWindow configEntryBtnBlingWithText:text backColor:backColor];
 }
 
 @end

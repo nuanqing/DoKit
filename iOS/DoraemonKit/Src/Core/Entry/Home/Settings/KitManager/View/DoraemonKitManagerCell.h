@@ -1,6 +1,6 @@
 //
 //  DoraemonKitManagerCell.h
-//  DoraemonKit
+//  AFNetworking
 //
 //  Created by didi on 2020/4/28.
 //
@@ -12,8 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DoraemonKitManagerCell : UICollectionViewCell
 
 - (void)update:(NSString *)image name:(NSString *)name select:(BOOL)select editStatus:(BOOL)editStatus;
-
-- (void)updateImage:(UIImage *)image;
 
 @end
 
