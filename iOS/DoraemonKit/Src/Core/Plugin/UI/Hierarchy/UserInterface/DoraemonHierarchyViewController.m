@@ -200,6 +200,10 @@
     [DoraemonHierarchyHelper shared].window = nil;
 }
 
+- (void)doraemonHierarchyInfoViewDidSelectStopButton:(DoraemonHierarchyInfoView *)view {
+    [[DoraemonHierarchyHelper shared].window hide];
+}
+
 - (void)showHierarchyInfo:(UIView *)selectView {
     DoraemonHierarchyDetailViewController *vc = [[DoraemonHierarchyDetailViewController alloc] init];
     vc.modalPresentationStyle = UIModalPresentationFullScreen;

@@ -23,6 +23,8 @@ typedef NS_ENUM(NSUInteger, DoraemonHierarchyInfoViewAction) {
 
 - (void)doraemonHierarchyInfoViewDidSelectCloseButton:(DoraemonHierarchyInfoView *)view;
 
+- (void)doraemonHierarchyInfoViewDidSelectStopButton:(DoraemonHierarchyInfoView *)view;
+
 @end
 
 @interface DoraemonHierarchyInfoView : DoraemonMoveView

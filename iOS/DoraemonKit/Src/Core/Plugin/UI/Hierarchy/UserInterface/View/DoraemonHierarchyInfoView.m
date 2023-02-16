@@ -11,6 +11,7 @@
 #import "DoraemonDefine.h"
 #import "NSObject+DoraemonHierarchy.h"
 #import "DoraemonHierarchyFormatterTool.h"
+#import <objc/runtime.h>
 
 @interface DoraemonHierarchyInfoView ()
 
@@ -19,6 +20,10 @@
 @property (nonatomic, strong) UIButton *closeButton;
 
 @property (nonatomic, strong) UILabel *contentLabel;
+
+@property (nonatomic, strong) UILabel *ivarLabel;
+
+@property (nonatomic, strong) UILabel *controlLabel;
 
 @property (nonatomic, strong) UILabel *frameLabel;
 
@@ -67,8 +72,19 @@
     
     NSMutableAttributedString *name = [[NSMutableAttributedString alloc] initWithString:@"Name: " attributes:boldAttri];
     [name appendAttributedString:[[NSAttributedString alloc] initWithString:NSStringFromClass(view.class) attributes:attri]];
-    
     self.contentLabel.attributedText = name;
+    
+    self.ivarLabel.attributedText = nil;
+    NSString *ivarText = [self viewInfo:view];
+    if (ivarText.length) {
+        NSMutableAttributedString *ivar = [[NSMutableAttributedString alloc] initWithString:@"Ivar: " attributes:boldAttri];
+        [ivar appendAttributedString:[[NSAttributedString alloc] initWithString:ivarText attributes:attri]];
+        self.ivarLabel.attributedText = ivar;
+    }
+    
+    NSMutableAttributedString *controller = [[NSMutableAttributedString alloc] initWithString:@"Controller: " attributes:boldAttri];
+    [controller appendAttributedString:[[NSAttributedString alloc] initWithString:[self viewCurrentControllerName:view] attributes:attri]];
+    self.controlLabel.attributedText = controller;
     
     NSMutableAttributedString *frame = [[NSMutableAttributedString alloc] initWithString:@"Frame: " attributes:boldAttri];
     [frame appendAttributedString:[[NSAttributedString alloc] initWithString:[DoraemonHierarchyFormatterTool stringFromFrame:view.frame] attributes:attri]];
@@ -106,6 +122,8 @@
     }
     
     [self.contentLabel sizeToFit];
+    [self.ivarLabel sizeToFit];
+    [self.controlLabel sizeToFit];
     [self.frameLabel sizeToFit];
     [self.backgroundColorLabel sizeToFit];
     [self.textColorLabel sizeToFit];
@@ -113,6 +131,67 @@
     [self.tagLabel sizeToFit];
     
     [self updateHeightIfNeeded];
+}
+
+// 当前页面控制器
+- (NSString *)viewCurrentControllerName:(UIView *)view {
+    if (view) {
+        UIResponder *responder = view.nextResponder;
+        while (responder != nil) {
+            if ([responder isKindOfClass:[UIViewController class]]) {
+                UIViewController *vc = (UIViewController *)responder;
+                return [NSString stringWithFormat:@"%@", NSStringFromClass(vc.class)];
+            }
+            responder = responder.nextResponder;
+        }
+    }
+    return @"";
+}
+
+-(NSString *)viewInfo:(UIView *)view{
+    if (view) {
+        //获取属性名
+        UIView *tempView = view;
+        NSString *ivarName = @"";
+        while(tempView != nil && tempView != self.viewController.view) {
+            ivarName =  [self nameWithInstance:view inTarger:tempView.superview];
+            if (ivarName) {
+                break;
+            }
+            tempView = tempView.superview;
+        }
+        if (!ivarName) {
+            ivarName = [self nameWithInstance:view inTarger:self.viewController.view];
+        }
+        
+        if (!ivarName) {
+            ivarName = [self nameWithInstance:view inTarger:view.viewController];
+        }
+        if (ivarName.length) {
+            return [ivarName stringByReplacingOccurrencesOfString:@"_" withString:@""];
+        }
+    }
+    return @"";
+}
+
+- (NSString *)nameWithInstance:(id)instance inTarger:(id)target{
+    unsigned int numIvars = 0;
+    NSString *key=nil;
+    Ivar * ivars = class_copyIvarList([target class], &numIvars);
+    for(int i = 0; i < numIvars; i++) {
+        Ivar thisIvar = ivars[i];
+        const char *type = ivar_getTypeEncoding(thisIvar);
+        NSString *stringType =  [NSString stringWithCString:type encoding:NSUTF8StringEncoding];
+        if (![stringType hasPrefix:@"@"]) {
+            continue;
+        }
+        if ((object_getIvar(target, thisIvar) == instance)) {
+            key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
+            break;
+        }
+    }
+    free(ivars);
+    return key;
 }
 
 - (void)layoutSubviews {
@@ -130,7 +209,11 @@
     
     self.contentLabel.frame = CGRectMake(10, 10, self.closeButton.doraemon_x - 10 - 10, self.contentLabel.doraemon_height);
     
-    self.frameLabel.frame = CGRectMake(self.contentLabel.doraemon_x, self.contentLabel.doraemon_bottom, self.contentLabel.doraemon_width, self.frameLabel.doraemon_height);
+    self.ivarLabel.frame = CGRectMake(self.contentLabel.doraemon_x, self.contentLabel.doraemon_bottom, self.contentLabel.doraemon_width, self.ivarLabel.doraemon_height);
+    
+    self.controlLabel.frame = CGRectMake(self.contentLabel.doraemon_x, self.ivarLabel.doraemon_bottom, self.contentLabel.doraemon_width, self.controlLabel.doraemon_height);
+    
+    self.frameLabel.frame = CGRectMake(self.contentLabel.doraemon_x, self.controlLabel.doraemon_bottom, self.contentLabel.doraemon_width, self.frameLabel.doraemon_height);
     
     self.backgroundColorLabel.frame = CGRectMake(self.contentLabel.doraemon_x, self.frameLabel.doraemon_bottom, self.contentLabel.doraemon_width, self.backgroundColorLabel.doraemon_height);
     
@@ -155,6 +238,8 @@
     
     [self addSubview:self.closeButton];
     [self addSubview:self.contentLabel];
+    [self addSubview:self.controlLabel];
+    [self addSubview:self.ivarLabel];
     [self addSubview:self.frameLabel];
     [self addSubview:self.backgroundColorLabel];
     [self addSubview:self.textColorLabel];
@@ -199,7 +284,7 @@
 
 #pragma mark - Primary
 - (void)updateHeightIfNeeded {
-    CGFloat contentHeight = self.contentLabel.doraemon_height + self.frameLabel.doraemon_height + self.backgroundColorLabel.doraemon_height + self.textColorLabel.doraemon_height + self.fontLabel.doraemon_height + self.tagLabel.doraemon_height;
+    CGFloat contentHeight = self.contentLabel.doraemon_height + self.controlLabel.doraemon_height + self.ivarLabel.doraemon_height + self.frameLabel.doraemon_height + self.backgroundColorLabel.doraemon_height + self.textColorLabel.doraemon_height + self.fontLabel.doraemon_height + self.tagLabel.doraemon_height;
     CGFloat height = 10 + MAX(contentHeight, 10 + 30/*self.closeButton.doraemon_height*/) + 10 + self.actionContentViewHeight + 10;
     if (height != self.doraemon_height) {
         self.doraemon_height = height;
@@ -209,6 +294,21 @@
             }
         }
     }
+}
+
+- (void)contentLabelClick {
+    if ([self.contentLabel.text containsString:@"Name: "]) {
+        NSString *copyStr = self.contentLabel.text.copy;
+        [UIPasteboard generalPasteboard].string = [copyStr stringByReplacingOccurrencesOfString:@"Name: " withString:@""];
+    }
+}
+
+- (void)ivarLabelClick {
+    
+}
+
+- (void)controlLabelClick {
+    
 }
 
 #pragma mark - Getters and setters
@@ -227,9 +327,40 @@
         _contentLabel.font = [UIFont systemFontOfSize:14];
         _contentLabel.textColor = [UIColor doraemon_black_1];
         _contentLabel.numberOfLines = 0;
+        _contentLabel.userInteractionEnabled = YES;
         _contentLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(contentLabelClick)];
+        [_contentLabel addGestureRecognizer:tap];
     }
     return _contentLabel;
+}
+
+- (UILabel *)ivarLabel {
+    if (!_ivarLabel) {
+        _ivarLabel = [[UILabel alloc] init];
+        _ivarLabel.font = [UIFont systemFontOfSize:14];
+        _ivarLabel.textColor = [UIColor doraemon_black_1];
+        _ivarLabel.numberOfLines = 0;
+        _ivarLabel.userInteractionEnabled = YES;
+        _ivarLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(ivarLabelClick)];
+        [_ivarLabel addGestureRecognizer:tap];
+    }
+    return _ivarLabel;
+}
+
+- (UILabel *)controlLabel {
+    if (!_controlLabel) {
+        _controlLabel = [[UILabel alloc] init];
+        _controlLabel.font = [UIFont systemFontOfSize:14];
+        _controlLabel.textColor = [UIColor doraemon_black_1];
+        _controlLabel.numberOfLines = 0;
+        _controlLabel.userInteractionEnabled = YES;
+        _controlLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(controlLabelClick)];
+        [_controlLabel addGestureRecognizer:tap];
+    }
+    return _controlLabel;
 }
 
 - (UILabel *)frameLabel {
