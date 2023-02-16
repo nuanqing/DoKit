@@ -16,6 +16,8 @@ typedef NS_ENUM(NSUInteger, DKHierarchyInfoViewAction) {
 
 - (void)hierarchyInfoViewDidSelectCloseButton:(DKHierarchyInfoView *)view;
 
+- (void)hierarchyInfoViewDidSelectStopButton:(DKHierarchyInfoView *)view;
+
 @end
 
 @interface DKHierarchyInfoView : DKMoveView
