@@ -264,7 +264,7 @@
 }
 
 - (void)stopButtonClicked:(UIButton *)sender {
-    [self.delegate hierarchyInfoViewDidSelectStopButton:self];
+    [self.delegate doraemonHierarchyInfoViewDidSelectStopButton:self];
 }
 
 - (void)closeButtonClicked:(UIButton *)sender {
