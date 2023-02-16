@@ -19,6 +19,8 @@
 
 @property (nonatomic, strong) UIButton *closeButton;
 
+@property (nonatomic, strong) UIButton *stopButton;
+
 @property (nonatomic, strong) UILabel *contentLabel;
 
 @property (nonatomic, strong) UILabel *ivarLabel;
@@ -199,6 +201,8 @@
 
     self.closeButton.frame = CGRectMake(self.doraemon_width - 10 - 30, 10, 30, 30);
     
+    self.stopButton.frame = CGRectMake(self.doraemon_width - 10 - 30, 50, 30, 30);
+    
     self.actionContentView.frame = CGRectMake(0, self.doraemon_height - self.actionContentViewHeight - 10, self.doraemon_width, self.actionContentViewHeight);
     
     self.parentViewsButton.frame = CGRectMake(10, 0, self.actionContentView.doraemon_width / 2.0 - 10 * 1.5, (self.actionContentView.doraemon_height - 10) / 2.0);
@@ -237,6 +241,7 @@
     self.actionContentViewHeight = 80;
     
     [self addSubview:self.closeButton];
+    [self addSubview:self.stopButton];
     [self addSubview:self.contentLabel];
     [self addSubview:self.controlLabel];
     [self addSubview:self.ivarLabel];
@@ -256,6 +261,10 @@
 #pragma mark - Event responses
 - (void)buttonClicked:(UIButton *)sender {
     [self.delegate doraemonHierarchyInfoView:self didSelectAt:sender.tag];
+}
+
+- (void)stopButtonClicked:(UIButton *)sender {
+    [self.delegate hierarchyInfoViewDidSelectStopButton:self];
 }
 
 - (void)closeButtonClicked:(UIButton *)sender {
@@ -304,11 +313,17 @@
 }
 
 - (void)ivarLabelClick {
-    
+    if ([self.ivarLabel.text containsString:@"Ivar: "]) {
+        NSString *copyStr = self.ivarLabel.text.copy;
+        [UIPasteboard generalPasteboard].string = [copyStr stringByReplacingOccurrencesOfString:@"Ivar: " withString:@""];
+    }
 }
 
 - (void)controlLabelClick {
-    
+    if ([self.controlLabel.text containsString:@"Controller: "]) {
+        NSString *copyStr = self.controlLabel.text.copy;
+        [UIPasteboard generalPasteboard].string = [copyStr stringByReplacingOccurrencesOfString:@"Controller: " withString:@""];
+    }
 }
 
 #pragma mark - Getters and setters
@@ -319,6 +334,15 @@
         [_closeButton setImage:[UIImage doraemon_xcassetImageNamed:@"doraemon_close"] forState:UIControlStateNormal];
     }
     return _closeButton;
+}
+
+- (UIButton *)stopButton {
+    if (!_stopButton) {
+        _stopButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_stopButton addTarget:self action:@selector(stopButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+        [_stopButton setImage:[UIImage doraemon_xcassetImageNamed:@"doraemon_default"] forState:UIControlStateNormal];
+    }
+    return _stopButton;
 }
 
 - (UILabel *)contentLabel {
